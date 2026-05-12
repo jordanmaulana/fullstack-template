@@ -1,0 +1,28 @@
+[project]
+name = "fullstack-template"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "bson>=0.5.10",
+    "django>=5.2.13",
+    "django-cors-headers>=4.4",
+    "djangorestframework>=3.17.1",
+    "google-auth>=2.35",
+    "gunicorn>=23",
+    "httpx>=0.28.1",
+    "psycopg[binary]>=3.2",
+    "python-dotenv>=1.0",
+    "requests>=2.32",
+    "ruff>=0.15.12",
+    "whitenoise>=6.12.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = []

@@ -1,0 +1,17 @@
+.env
+.env.docker
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+frontend/dist/
+frontend/node_modules/
+static/output.css
+.DS_Store
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+frontend/src/routeTree.gen.ts
