@@ -6,9 +6,7 @@ from django.views import View
 
 
 class SuperuserRequiredMixin(View):
-    @method_decorator(
-        user_passes_test(lambda user: user.is_superuser, login_url="/login/")
-    )
+    @method_decorator(user_passes_test(lambda user: user.is_superuser, login_url="/login/"))
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 

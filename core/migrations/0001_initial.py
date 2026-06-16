@@ -4,23 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='AppSetting',
+            name="AppSetting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField()),
-                ('should_be_unique', models.BooleanField(default=True)),
-                ('str_value', models.TextField(blank=True, null=True)),
-                ('int_value', models.IntegerField(blank=True, null=True)),
-                ('float_value', models.FloatField(blank=True, null=True)),
-                ('bool_value', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("key", models.CharField()),
+                ("should_be_unique", models.BooleanField(default=True)),
+                ("str_value", models.TextField(blank=True, null=True)),
+                ("int_value", models.IntegerField(blank=True, null=True)),
+                ("float_value", models.FloatField(blank=True, null=True)),
+                ("bool_value", models.BooleanField(default=True)),
             ],
         ),
     ]

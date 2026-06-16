@@ -25,6 +25,32 @@ export async function googleSignIn(credential: string): Promise<AuthResponse> {
   return res;
 }
 
+export async function register(
+  email: string,
+  password: string,
+): Promise<AuthResponse> {
+  const res = await api<AuthResponse>("/auth/register/", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+    skipAuth: true,
+  });
+  setToken(res.token);
+  return res;
+}
+
+export async function emailLogin(
+  email: string,
+  password: string,
+): Promise<AuthResponse> {
+  const res = await api<AuthResponse>("/auth/login/", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+    skipAuth: true,
+  });
+  setToken(res.token);
+  return res;
+}
+
 export async function logout(): Promise<void> {
   try {
     await api<void>("/auth/logout/", { method: "POST" });

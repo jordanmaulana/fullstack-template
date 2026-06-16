@@ -26,8 +26,9 @@ def _headers() -> dict:
     }
 
 
-def create_payment_link(*, name: str, amount: int, email: str, description: str,
-                        redirect_url: str, mobile: str = "") -> dict:
+def create_payment_link(
+    *, name: str, amount: int, email: str, description: str, redirect_url: str, mobile: str = ""
+) -> dict:
     payload = {
         "name": name,
         "amount": amount,
@@ -38,8 +39,9 @@ def create_payment_link(*, name: str, amount: int, email: str, description: str,
     if mobile:
         payload["mobile"] = mobile
     try:
-        resp = httpx.post(f"{_base_url()}/payment/create", headers=_headers(),
-                          json=payload, timeout=15)
+        resp = httpx.post(
+            f"{_base_url()}/payment/create", headers=_headers(), json=payload, timeout=15
+        )
     except httpx.HTTPError as exc:
         raise MayarError(f"Mayar request failed: {exc}") from exc
     if resp.status_code >= 400:
@@ -54,8 +56,7 @@ def create_payment_link(*, name: str, amount: int, email: str, description: str,
 
 
 def get_payment_status(payment_id: str) -> dict:
-    resp = httpx.get(f"{_base_url()}/payment/{payment_id}",
-                     headers=_headers(), timeout=15)
+    resp = httpx.get(f"{_base_url()}/payment/{payment_id}", headers=_headers(), timeout=15)
     if resp.status_code >= 400:
         raise MayarError(f"Mayar {resp.status_code}: {resp.text}")
     data = resp.json().get("data") or {}

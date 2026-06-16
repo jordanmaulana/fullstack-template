@@ -43,6 +43,8 @@ export function AuthGate() {
       return;
     }
     if (!user) return;
+    // Opt-in onboarding gate: dormant while the backend reports onboarded=true
+    // (template default). Activates once get_onboarded can return false. See CLAUDE.md.
     if (!user.onboarded && pathname !== "/onboarding") {
       navigate({ to: "/onboarding" });
       return;
