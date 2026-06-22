@@ -4,8 +4,16 @@ Guidance for Claude Code working in this fullstack template.
 
 ## Stack
 
-- **Backend**: Django + DRF. API in `api/` (v1 in `api/v1/`), shared models/utils in `core/`. Token auth (`rest_framework.authtoken`). Package mgmt via `uv`.
+- **Backend**: Django + DRF. API in `api/` (v1 in `api/v1/`). `core/` = project config (settings/urls/wsgi) + shared abstractions only (`BaseModel`, `AppSetting`, payments, utils). **Domain models do NOT go in `core` — each context gets its own app** (see [App structure](#app-structure-where-models-go)). Token auth (`rest_framework.authtoken`). Package mgmt via `uv`.
 - **Frontend**: React + Vite SPA in `frontend/`, routing by TanStack Router (file-based, `frontend/src/routes/`), state by Jotai. Package mgmt via `pnpm`.
+
+## App structure (where models go)
+
+**One Django app per domain context. A new model = a new (or existing) domain app, NEVER `core`.**
+
+- Create it: `uv run manage.py startapp <name>` at repo root (top-level, sibling to `core/` and `api/`), add `"<name>"` to `INSTALLED_APPS` in `core/settings.py`, then `make mmg && make migrate`.
+- Name apps by context (`accounts`, `billing`, `projects`), not by layer. Domain models subclass `BaseModel` from `core.models` for ObjectId PK + timestamps + `actor`.
+- `core` is reserved for project config and cross-cutting shared code only (`BaseModel`, `AppSetting`, payments, utils). Do **not** add feature/domain models to `core/models.py`.
 
 ## Auth + frontend flow (read before touching login/onboarding/routing)
 
@@ -21,7 +29,7 @@ Guidance for Claude Code working in this fullstack template.
 
 Previously the template trapped users in onboarding because `get_onboarded` read a non-existent `profile` model and always returned false with no way to complete it. To build a working onboarding flow, change **all four** touch-points in one pass:
 
-1. **Model**: add a `Profile` model (or an `onboarded`/`full_name` field) in `core/models.py`, then `make mmg && make migrate`.
+1. **Model**: create an `accounts` app (`uv run manage.py startapp accounts`), add `"accounts"` to `INSTALLED_APPS` in `core/settings.py`, define `Profile(BaseModel)` (e.g. `full_name`, `OneToOne` to `User`) in `accounts/models.py`, then `make mmg && make migrate`. Do **not** put this in `core/models.py` (see [App structure](#app-structure-where-models-go)).
 2. **Serializer**: `get_onboarded` in `api/v1/serializers.py` returns the real state (e.g. `bool(obj.profile.full_name)`).
 3. **Endpoint**: add a PATCH/POST in `api/v1/auth_api.py` (wired in the v1 urls) that fills the profile / flips the flag.
 4. **Frontend**: build the form in `frontend/src/routes/onboarding.tsx` to call that endpoint, then refetch `me()` so `AuthGate` redirects to `/dashboard`.
