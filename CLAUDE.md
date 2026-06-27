@@ -15,6 +15,16 @@ Guidance for Claude Code working in this fullstack template.
 - Name apps by context (`accounts`, `billing`, `projects`), not by layer. Domain models subclass `BaseModel` from `core.models` for ObjectId PK + timestamps + `actor`.
 - `core` is reserved for project config and cross-cutting shared code only (`BaseModel`, `AppSetting`, payments, utils). Do **not** add feature/domain models to `core/models.py`.
 
+## API conventions (read before adding endpoints)
+
+API modules live in `api/v1/{resource}_api.py`. Use class-based `from rest_framework.views import APIView` (one `APIView` subclass per resource), wired in `api/v1/urls.py` via `.as_view()`, serializers centralized in `api/v1/serializers.py`.
+
+- **A `{resource}_api.py` view may only define the four standard CRUD methods: `get`, `patch`, `post`, `delete`** (retrieve/list, update, create, destroy on that resource). No other HTTP methods belong here.
+- **Everything else goes to `api/v1/{resource}_extras_api.py`** — one extras file per resource, sibling to its `_api.py`, wired in the same `urls.py`, also `APIView` classes. "Everything else" = custom / RPC-style actions that aren't plain CRUD on the resource: auth flows (`login`, `register`, `logout`, `google`), webhooks, bulk / aggregate / side-effect endpoints.
+- Example: `ProjectAPI(APIView)` in `projects_api.py` defines `get`/`patch`/`post`/`delete` for projects; `projects_extras_api.py` holds `POST /projects/{id}/archive/` or `POST /projects/import/`.
+
+> Existing `auth_api.py` / `payments_api.py` use the older function-based `@api_view` style and predate this rule. `auth_api.py`'s custom endpoints (`login`/`register`/`logout`/`google`) are the canonical example of what now belongs in an `auth_extras_api.py`. Leave both as-is unless you're touching them for another reason.
+
 ## Auth + frontend flow (read before touching login/onboarding/routing)
 
 - Endpoints: `api/v1/auth_api.py` — `POST /auth/google/`, `POST /auth/register/`, `POST /auth/login/` each return `{ token, user }`; `GET /auth/me/` rehydrates the user from the token; `POST /auth/logout/` deletes the token.
